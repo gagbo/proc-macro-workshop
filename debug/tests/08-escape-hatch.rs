@@ -21,7 +21,7 @@
 // without removing bounds inferred based on the other fields:
 //
 //     #[derive(CustomDebug)]
-//     pub struct Wrapper<T: Trait, U> {
+//     pub struct WrapperExtra<T: Trait, U> {
 //         #[debug(bound = "T::Value: Debug")]
 //         field: Field<T>,
 //         normal: U,
@@ -41,6 +41,13 @@ pub struct Wrapper<T: Trait> {
 }
 
 #[derive(CustomDebug)]
+pub struct WrapperExtra<T: Trait, U> {
+    #[debug(bound = "T::Value: Debug")]
+    field: Field<T>,
+    extra_field: U,
+}
+
+#[derive(CustomDebug)]
 struct Field<T: Trait> {
     values: Vec<T::Value>,
 }
@@ -55,4 +62,5 @@ fn main() {
     }
 
     assert_debug::<Wrapper<Id>>();
+    assert_debug::<WrapperExtra<Id, usize>>();
 }
