@@ -6,23 +6,27 @@
 // To run the code:
 //     $ cargo run
 
-use derive_builder::Builder;
+use derive_debug::CustomDebug;
+use std::fmt::Debug;
 
-#[derive(Builder)]
-pub struct Command {
-    executable: String,
-    args: Vec<String>,
-    env: Vec<String>,
-    current_dir: String,
+pub trait Trait {
+    type Value;
 }
 
-fn main() {
-    let mut builder = Command::builder();
-    builder.executable("cargo".to_owned());
-    builder.args(vec!["build".to_owned(), "--release".to_owned()]);
-    builder.env(vec![]);
-    builder.current_dir("..".to_owned());
+#[derive(CustomDebug)]
+pub struct Field<T: Trait> {
+    values: Vec<T::Value>,
+}
 
-    let command = builder.build().unwrap();
-    assert_eq!(command.executable, "cargo");
+fn assert_debug<F: Debug>() {}
+
+fn main() {
+    // Does not implement Debug, but its associated type does.
+    struct Id;
+
+    impl Trait for Id {
+        type Value = u8;
+    }
+
+    assert_debug::<Field<Id>>();
 }
