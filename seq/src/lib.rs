@@ -10,6 +10,8 @@ mod seq_derive {
     use quote::{quote, quote_spanned};
     use syn::{braced, parse::Parse, parse_macro_input, Ident, LitInt, Result};
 
+    const PASTE_SEP: &str = "~";
+
     struct Seq {
         var: Ident,
         lower_bound: LitInt,
@@ -46,8 +48,6 @@ mod seq_derive {
             local: &Ident,
             current_value: &syn::Index,
         ) -> Result<TokenStream> {
-            // Ok(Default::default())
-            // TODO: adding this code makes the test 2 fail actually
             match tt {
                 TokenTree::Group(inner) => {
                     let span = inner.span();
@@ -114,6 +114,12 @@ mod seq_derive {
                 .map(|i| {
                     let cur_val = i;
                     let local = var.clone();
+                    // TODO: Unwrap the iterator and instead walk the body
+                    // item by item to build the stream of rewritten tokens.
+                    //
+                    // let mut body_elems = body.clone().into_iter().peekable()
+                    // loop { ... }
+                    // NOTE: Iterator::scan is not usable because we want to use peekable
                     body.clone()
                         .into_iter()
                         .map(move |tt| -> Result<TokenStream> {
