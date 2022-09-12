@@ -39,4 +39,7 @@ pub enum Conference {
     RustRush,
 }
 
-fn main() {}
+fn main() {
+    // Checking that the enum is still present
+    let _ = Conference::RustFest;
+}
